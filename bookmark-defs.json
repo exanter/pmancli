@@ -1,0 +1,26 @@
+{
+    "id": "1",
+    "name": "This is the overall name of the test/bookmark",
+    "request": "https://foo.bar.baz/test",
+    "method": "POST",
+    "headers": [
+        {
+            "name": "Content-Type",
+            "val": "application/json"
+        },
+        {
+            "name": "x-api-key",
+            "val": "lkasklju09r3oiew"
+        }
+    ],
+    "body": {
+        "mode": "urlencoded",
+        "urlencoded": [
+            {
+                "var": "var1",
+                "val": "val1"
+            }
+        ]
+    }
+}
+
