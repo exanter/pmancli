@@ -1,11 +1,13 @@
-{
-    "Name": "EIS Mock",
-    "vars": {
-        "keyname": "keyvalue",
-        "key2": "val2",
-        "key3": "val3",
-        "key4": "val4",
-        "key5": "val5",
-        "key6": "val6"
+[
+    {
+        "Name": "EIS Mock",
+        "vars": {
+            "keyname": "keyvalue",
+            "key2": "val2",
+            "key3": "val3",
+            "key4": "val4",
+            "key5": "val5",
+            "key6": "val6"
+        }
     }
-}
+]

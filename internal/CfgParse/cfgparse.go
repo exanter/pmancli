@@ -1,4 +1,4 @@
-package main
+package CfgParse
 
 import (
     "fmt"
@@ -45,18 +45,41 @@ type Environment struct {
     Vars map[string]string  `json:"vars"`
 }
 
-func main() {
-    var bmark Bookmark
-    var en Environment
+func ParseEnvironments(path string) []Environment {
+    var result []Environment
 
-    bfile, err := os.Open("./bookmark-defs.json")
+    efile, err := os.Open(path)
+    if err != nil {
+        log.Fatal(err)
+    }
+    defer efile.Close()
+
+    ebyteValue, _ := io.ReadAll(efile)
+    if en := json.Unmarshal(ebyteValue, &result); en != nil {
+        if ute, ok := en.(*json.UnmarshalTypeError); ok {
+            fmt.Printf("unmarshalTypeError %v - %v - %v\n", ute.Value, ute.Type, ute.Offset)
+        } else {
+            fmt.Println("Other error:", en)
+        }
+    }
+
+    fmt.Printf("\nEnvironment read in:\n")
+    spew.Dump(result)
+    return result
+}
+
+
+func ParseBookmarks(path string) []Bookmark {
+    var result []Bookmark
+
+    bfile, err := os.Open(path)
     if err != nil {
         log.Fatal(err)
     }
     defer bfile.Close()
 
     byteValue, _ := io.ReadAll(bfile)
-    if e := json.Unmarshal(byteValue, &bmark); e != nil {
+    if e := json.Unmarshal(byteValue, &result); e != nil {
         if ute, ok := e.(*json.UnmarshalTypeError); ok {
             fmt.Printf("unmarshalTypeError %v - %v - %v\n", ute.Value, ute.Type, ute.Offset)
         } else {
@@ -65,24 +88,6 @@ func main() {
     }
 
     fmt.Printf("Bookmark read in:\n")
-    spew.Dump(bmark)
-
-    efile, err := os.Open("./env-defs.json")
-    if err != nil {
-        log.Fatal(err)
-    }
-    defer efile.Close()
-
-    ebyteValue, _ := io.ReadAll(efile)
-    if er := json.Unmarshal(ebyteValue, &en); er != nil {
-        if ute, ok := er.(*json.UnmarshalTypeError); ok {
-            fmt.Printf("unmarshalTypeError %v - %v - %v\n", ute.Value, ute.Type, ute.Offset)
-        } else {
-            fmt.Println("Other error:", er)
-        }
-    }
-
-    fmt.Printf("\nEnvironment read in:\n")
-    spew.Dump(en)
+    spew.Dump(result)
+    return result
 }
-
