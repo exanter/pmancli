@@ -29,3 +29,18 @@ func ParseEnvironments(path string) []Environment {
     fmt.Printf("\nEnvironment read in:\n")
     return result
 }
+
+
+func AddEnvironment(nenv Environment, envlist []Environment, path string) {
+    bfile, err := os.OpenFile(path, os.O_TRUNC|os.O_CREATE|os.O_WRONLY, 0644)
+    if err != nil {
+        log.Fatal(err)
+    }
+    defer bfile.Close()
+
+    envlist = append(envlist, nenv)
+
+    benv, _ := json.Marshal(envlist)
+    wres, _ := bfile.Write([]byte(benv))
+    fmt.Printf("wres (Environment): %v\n", wres)
+}
