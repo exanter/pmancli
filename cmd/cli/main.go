@@ -19,5 +19,7 @@ func main() {
     spew.Dump(bmark)
     fmt.Printf("\nDumping Environments...\n")
     spew.Dump(en)
-}
 
+    cfgparse.RunBookmark(bmark[0])
+
+}
