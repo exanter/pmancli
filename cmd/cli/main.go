@@ -20,6 +20,15 @@ func main() {
     fmt.Printf("\nDumping Environments...\n")
     spew.Dump(en)
 
+    var newbmark cfgparse.Bookmark
+
+    newbmark.Id = "2"
+    newbmark.Name = "Second Bookmark"
+    newbmark.Request = "https://www.konectauto.com/"
+    newbmark.Method = "GET"
+    newbmark.Body.Mode = ""
+
     cfgparse.RunBookmark(bmark[0])
 
+    cfgparse.AddBookmark(newbmark, bmark, "./bookmark-defs.json")
 }

@@ -56,3 +56,17 @@ func RunBookmark(bmark Bookmark) {
     fmt.Printf("%s\n", body)
 }
 
+
+func AddBookmark(bmark Bookmark, bmarklist []Bookmark, path string) {
+    bfile, err := os.OpenFile(path, os.O_TRUNC|os.O_CREATE|os.O_WRONLY, 0644)
+    if err != nil {
+        log.Fatal(err)
+    }
+    defer bfile.Close()
+
+    bmarklist = append(bmarklist, bmark)
+
+    bjson, _ := json.Marshal(bmarklist)
+    wres, _ := bfile.Write([]byte(bjson))
+    fmt.Printf("wres: %v\n", wres)
+}
