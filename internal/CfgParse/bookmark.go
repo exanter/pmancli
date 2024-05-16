@@ -5,12 +5,34 @@ import (
     "log"
     "os"
     "io"
+    "strings"
     "encoding/json"
     "net/http"
     "net/http/httputil"
     // "context"
     // "time"
 )
+
+func ReadBookmarks(dirpath string) map[string][]Bookmark {
+    var result  = make(map[string][]Bookmark)
+
+    files, err := os.ReadDir(dirpath)
+    if err != nil {
+        log.Fatal(err)
+    }
+
+    var fullpath string 
+    for _, file := range files {
+        fmt.Printf("File found: %s, reading...\n", file)
+        parts := strings.Split(file.Name(), ".")
+
+        fullpath = dirpath + "/" + file.Name()
+        result[parts[0]] = ParseBookmarks(fullpath)
+    }
+
+    return result
+}
+
 
 func ParseBookmarks(path string) []Bookmark {
     var result []Bookmark

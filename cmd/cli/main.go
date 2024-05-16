@@ -1,16 +1,17 @@
 package main
 
 import (
-	// "fmt"
+	"fmt"
     "os"
     "log"
-    "database/sql"
+    // "database/sql"
 	// "github.com/davecgh/go-spew/spew"
     //sqlite "github.com/mattn/go-sqlite3"
-	// cfgparse "pmancli/internal/CfgParse"
+	cfgparse "pmancli/internal/CfgParse"
 )
 
 var configDirBase string = ".pmancli"
+var bookmarksDir string = ""
 
 /* ---
  * Intialize the environtment:
@@ -33,7 +34,8 @@ func InitializeEnvironment() {
         }
     }
 
-    var envdirs = [3]string{configDir+"/bookmarks", configDir+"/environments", configDir+"/results"}
+    bookmarksDir = configDir + "/bookmarks"
+    var envdirs = [3]string{bookmarksDir, configDir+"/environments", configDir+"/results"}
     for _, edir := range envdirs {
         _, err := os.Stat(edir)
         if os.IsNotExist(err) {
@@ -66,11 +68,10 @@ func InitializeEnvironment() {
 }
 
 func main() {
-	// var bmark []cfgparse.Bookmark
-	// var en []cfgparse.Environment
-
     InitializeEnvironment()
+    var foobar = cfgparse.ReadBookmarks(bookmarksDir)
 
+    fmt.Printf("bookmarks:\n+%v\n", foobar)
 
     /*
 	bmark = cfgparse.ParseBookmarks("./bookmark-defs.json")
