@@ -10,8 +10,15 @@ import (
 	cfgparse "pmancli/internal/CfgParse"
 )
 
+type pmanContext struct {
+    Bookmarks []cfgparse.Bookmark
+    Environments []cfgparse.Environment
+}
+
 var configDirBase string = ".pmancli"
-var bookmarksDir string = ""
+var bookmarksDir string = "bookmarks"
+var environmentsDir string = "environments"
+var configDir string = ""
 
 /* ---
  * Intialize the environtment:
@@ -24,7 +31,7 @@ var bookmarksDir string = ""
  *          queryresults.db
  */
 func InitializeEnvironment() {
-    var configDir string = os.Getenv("HOME") + "/" + configDirBase
+    configDir = os.Getenv("HOME") + "/" + configDirBase
 
     _, err := os.Stat(configDir)
     if os.IsNotExist(err) {
@@ -68,10 +75,14 @@ func InitializeEnvironment() {
 }
 
 func main() {
-    InitializeEnvironment()
-    var foobar = cfgparse.ReadBookmarks(bookmarksDir)
+    context := pmanContext{}
 
-    fmt.Printf("bookmarks:\n+%v\n", foobar)
+    InitializeEnvironment()
+
+    context.Environments = cfgparse.ParseEnvironments(configDir+"/"+environmentsDir)
+    context.Bookmarks = cfgparse.ParseBookmarks(bookmarksDir)
+
+    fmt.Printf("Environments:\n+%v\n", context.Environments)
 
     /*
 	bmark = cfgparse.ParseBookmarks("./bookmark-defs.json")

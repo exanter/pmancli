@@ -5,58 +5,46 @@ import (
     "log"
     "os"
     "io"
-    "strings"
-    "encoding/json"
-    "net/http"
-    "net/http/httputil"
+    //"strings"
+    // "encoding/json"
+    "gopkg.in/yaml.v3"
+    // "net/http"
+    // "net/http/httputil"
     // "context"
     // "time"
 )
 
-func ReadBookmarks(dirpath string) map[string][]Bookmark {
-    var result  = make(map[string][]Bookmark)
-
-    files, err := os.ReadDir(dirpath)
-    if err != nil {
-        log.Fatal(err)
-    }
-
-    var fullpath string 
-    for _, file := range files {
-        fmt.Printf("File found: %s, reading...\n", file)
-        parts := strings.Split(file.Name(), ".")
-
-        fullpath = dirpath + "/" + file.Name()
-        result[parts[0]] = ParseBookmarks(fullpath)
-    }
-
-    return result
-}
-
-
-func ParseBookmarks(path string) []Bookmark {
+func ParseBookmarks(envdir string) []Bookmark {
     var result []Bookmark
+    var bmark Bookmark
 
-    bfile, err := os.Open(path)
+    entries, err := os.ReadDir(envdir)
     if err != nil {
         log.Fatal(err)
     }
-    defer bfile.Close()
 
-    byteValue, _ := io.ReadAll(bfile)
-    if e := json.Unmarshal(byteValue, &result); e != nil {
-        if ute, ok := e.(*json.UnmarshalTypeError); ok {
-            fmt.Printf("unmarshalTypeError %v - %v - %v\n", ute.Value, ute.Type, ute.Offset)
-        } else {
+    for _, e := range entries {
+        path := envdir + "/" + e.Name()
+        bfile, err := os.Open(path)
+        if err != nil {
+            log.Fatal(err)
+        }
+        defer bfile.Close()
+
+        byteValue, _ := io.ReadAll(bfile)
+        if e := yaml.Unmarshal(byteValue, &bmark); e != nil {
             fmt.Println("Other error:", e)
         }
+
+        fmt.Printf("Bookmark read in:\n%+v\n", bmark)
+        result = append(result, bmark)
     }
 
-    fmt.Printf("Bookmark read in:\n")
     return result
 }
 
 
+/*
 func RunBookmark(bmark Bookmark) {
     client := &http.Client{}
     // ctx := context.Background()
@@ -77,7 +65,7 @@ func RunBookmark(bmark Bookmark) {
     res.Body.Close()
     fmt.Printf("%s\n", body)
 }
-
+*/
 
 func AddBookmark(bmark Bookmark, bmarklist []Bookmark, path string) {
     bfile, err := os.OpenFile(path, os.O_TRUNC|os.O_CREATE|os.O_WRONLY, 0644)
@@ -88,7 +76,7 @@ func AddBookmark(bmark Bookmark, bmarklist []Bookmark, path string) {
 
     bmarklist = append(bmarklist, bmark)
 
-    bjson, _ := json.Marshal(bmarklist)
+    bjson, _ := yaml.Marshal(bmarklist)
     wres, _ := bfile.Write([]byte(bjson))
     fmt.Printf("wres: %v\n", wres)
 }
